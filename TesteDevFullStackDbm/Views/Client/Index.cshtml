@@ -1,0 +1,113 @@
+﻿@model IEnumerable<TesteDevFullStackDbm.Data.Entities.Client>
+
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<h1>Clientes</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Criar Novo Cliente</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.IdCliente)</th>
+            <th>@Html.DisplayNameFor(model => model.Nome)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
+            <th>@Html.DisplayNameFor(model => model.Telefone)</th>
+            <th>@Html.DisplayNameFor(model => model.Endereco)</th>
+            <th>Protocolos</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var client in Model)
+        {
+            <tr>
+                <td>@client.IdCliente</td>
+                <td>@client.Nome</td>
+                <td>@client.Email</td>
+                <td>@client.Telefone</td>
+                <td>@client.Endereco</td>
+                <td>
+                    @if (client.Protocols.Any())
+                    {
+                        <div class="accordion" id="protocolsAccordion_@client.IdCliente">
+                            @foreach (var protocol in client.Protocols)
+                            {
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading_@protocol.IdProtocol">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@protocol.IdProtocol" aria-expanded="false" aria-controls="collapse_@protocol.IdProtocol">
+                                            <strong>@protocol.Titulo</strong> - @protocol.StatusProtocol.NomeStatus
+                                        </button>
+                                    </h2>
+                                    <div id="collapse_@protocol.IdProtocol" class="accordion-collapse collapse" aria-labelledby="heading_@protocol.IdProtocol" data-bs-parent="#protocolsAccordion_@client.IdCliente">
+                                        <div class="accordion-body">
+                                            <table class="table table-sm">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong>Descrição:</strong></td>
+                                                        <td>@protocol.Descricao</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Data de Abertura:</strong></td>
+                                                        <td>@protocol.DataAbertura.ToString("dd/MM/yyyy")</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Data de Fechamento:</strong></td>
+                                                        <td>@(protocol.DataFechamento?.ToString("dd/MM/yyyy") ?? "Em aberto")</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            @if (protocol.Follows.Any())
+                                            {
+                                                <h6>Histórico de Acompanhamento:</h6>
+                                                <table class="table table-bordered table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Data</th>
+                                                            <th>Ação</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var follow in protocol.Follows)
+                                                        {
+                                                            <tr>
+                                                                <td>@follow.DataAcao.ToString("dd/MM/yyyy")</td>
+                                                                <td>@follow.DescricaoAcao</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            }
+                                            else
+                                            {
+                                                <p class="text-muted">Sem acompanhamentos registrados.</p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Sem protocolos</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@client.IdCliente" class="btn btn-primary btn-sm">Editar</a>
+                    <a asp-action="Details" asp-route-id="@client.IdCliente" class="btn btn-info btn-sm">Detalhes</a>
+                    <a asp-action="Delete" asp-route-id="@client.IdCliente" class="btn btn-danger btn-sm">Excluir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+}
